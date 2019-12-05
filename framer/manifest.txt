@@ -46,7 +46,6 @@ design/images/vw9Qut0iUCshVNWIAidrNYYQYOw.png
 design/images/sNMWpoOr1M0nw12nd3uRK3NSbs.png
 design/images/egIfvz04SemIl2OkJx76p5ArXAM.png
 design/images/WUUtFqPaCN3uONgxtaoPyNHdfGk.png
-design/images/TjC2ohBqeQ1ojZPqQaF5fQEHNk.png
 design/images/PycxL1DNT5YQpTUpLuuuD4nWGYY.png
 design/images/MRX0BFmceNfFLCoOXXV8JuixQo4.png
 design/images/KQGyTMPTw0atwKUG3IHKZyUTkYg.jpg
