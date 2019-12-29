@@ -86,6 +86,7 @@ node_modules/@framer/benjamin.input/code/Input.tsx
 node_modules/@framer/benjamin.input/build/vendors.js
 node_modules/@framer/benjamin.input/build/index.js
 node_modules/@framer/benjamin.input/README.md
+dist/index.js
 design/images/vw9Qut0iUCshVNWIAidrNYYQYOw.png
 design/images/sNMWpoOr1M0nw12nd3uRK3NSbs.png
 design/images/egIfvz04SemIl2OkJx76p5ArXAM.png
