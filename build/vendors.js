@@ -18804,6 +18804,983 @@ if (false) {} else {
 
 /***/ }),
 
+/***/ "./node_modules/react-panelgroup/es/Divider.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/react-panelgroup/es/Divider.js ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Divider; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
+var _class, _temp;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+var Divider = (_temp = _class = function (_React$Component) {
+  _inherits(Divider, _React$Component);
+
+  function Divider() {
+    _classCallCheck(this, Divider);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args)));
+
+    _this.handleDragStart = function (e, x, y) {
+      _this.setState({
+        dragging: true,
+        initPos: {
+          x: x,
+          y: y
+        }
+      });
+
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    _this.handleDragEnd = function (e) {
+      _this.setState({ dragging: false });
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    _this.handleDragMove = function (e, x, y) {
+      if (!_this.state.dragging) return;
+
+      var initDelta = {
+        x: x - _this.state.initPos.x,
+        y: y - _this.state.initPos.y
+      };
+
+      var flowMask = {
+        x: _this.props.direction === 'row' ? 1 : 0,
+        y: _this.props.direction === 'column' ? 1 : 0
+      };
+
+      var flowDelta = initDelta.x * flowMask.x + initDelta.y * flowMask.y;
+
+      // Resize the panels
+      var resultDelta = _this.handleResize(_this.props.panelID, initDelta);
+
+      // if the divider moved, reset the initPos
+      if (resultDelta + flowDelta !== 0) {
+        // Did we move the expected amount? (snapping will result in a larger delta)
+        var expectedDelta = resultDelta === flowDelta;
+
+        _this.setState({
+          initPos: {
+            // if we moved more than expected, add the difference to the Position
+            x: x + (expectedDelta ? 0 : resultDelta * flowMask.x),
+            y: y + (expectedDelta ? 0 : resultDelta * flowMask.y)
+          }
+        });
+      }
+
+      e.stopPropagation();
+      e.preventDefault();
+    };
+
+    _this.onMouseDown = function (e) {
+      // only left mouse button
+      if (e.button !== 0) return;
+      _this.handleDragStart(e, e.pageX, e.pageY);
+    };
+
+    _this.onMouseMove = function (e) {
+      _this.handleDragMove(e, e.pageX, e.pageY);
+    };
+
+    _this.onTouchStart = function (e) {
+      _this.handleDragStart(e, e.touches[0].clientX, e.touches[0].clientY);
+    };
+
+    _this.onTouchMove = function (e) {
+      _this.handleDragMove(e, e.touches[0].clientX, e.touches[0].clientY);
+    };
+
+    _this.handleResize = function (i, delta) {
+      return _this.props.handleResize(i, delta);
+    };
+
+    _this.getHandleWidth = function () {
+      return _this.props.dividerWidth + _this.props.handleBleed * 2;
+    };
+
+    _this.getHandleOffset = function () {
+      return _this.props.dividerWidth / 2 - _this.getHandleWidth() / 2;
+    };
+
+    _this.state = {
+      dragging: false,
+      initPos: { x: null, y: null }
+    };
+    return _this;
+  }
+
+  // Add/remove event listeners based on drag state
+
+
+  Divider.prototype.componentDidUpdate = function componentDidUpdate(props, state) {
+    if (this.state.dragging && !state.dragging) {
+      document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('touchmove', this.onTouchMove, {
+        passive: false
+      });
+      document.addEventListener('mouseup', this.handleDragEnd);
+      document.addEventListener('touchend', this.handleDragEnd, {
+        passive: false
+      });
+      // maybe move it to setState callback ?
+      this.props.onResizeStart();
+    } else if (!this.state.dragging && state.dragging) {
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('touchmove', this.onTouchMove, {
+        passive: false
+      });
+      document.removeEventListener('mouseup', this.handleDragEnd);
+      document.removeEventListener('touchend', this.handleDragEnd, {
+        passive: false
+      });
+      this.props.onResizeEnd();
+    }
+  };
+
+  // Start drag state and set initial position
+
+
+  // End drag state
+
+
+  // Call resize handler if we're dragging
+
+
+  // Call resize on mouse events
+  // Event onMosueDown
+
+  // Event onMouseMove
+
+
+  // Call resize on Touch events (mobile)
+  // Event ontouchstart
+
+
+  // Event ontouchmove
+
+
+  // Handle resizing
+
+
+  // Utility functions for handle size provided how much bleed
+  // we want outside of the actual divider div
+
+
+  // Render component
+  Divider.prototype.render = function render() {
+    var style = {
+      divider: {
+        width: this.props.direction === 'row' ? this.props.dividerWidth : 'auto',
+        minWidth: this.props.direction === 'row' ? this.props.dividerWidth : 'auto',
+        maxWidth: this.props.direction === 'row' ? this.props.dividerWidth : 'auto',
+        height: this.props.direction === 'column' ? this.props.dividerWidth : 'auto',
+        minHeight: this.props.direction === 'column' ? this.props.dividerWidth : 'auto',
+        maxHeight: this.props.direction === 'column' ? this.props.dividerWidth : 'auto',
+        flexGrow: 0,
+        position: 'relative'
+      },
+      handle: {
+        position: 'absolute',
+        width: this.props.direction === 'row' ? this.getHandleWidth() : '100%',
+        height: this.props.direction === 'column' ? this.getHandleWidth() : '100%',
+        left: this.props.direction === 'row' ? this.getHandleOffset() : 0,
+        top: this.props.direction === 'column' ? this.getHandleOffset() : 0,
+        backgroundColor: this.props.showHandles ? 'rgba(0,128,255,0.25)' : 'auto',
+        cursor: this.props.direction === 'row' ? 'col-resize' : 'row-resize',
+        zIndex: 100
+      }
+    };
+    Object.assign(style.divider, { backgroundColor: this.props.borderColor });
+
+    // Add custom class if dragging
+    var className = 'divider';
+    if (this.state.dragging) {
+      className += ' dragging';
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      'div',
+      {
+        className: className,
+        style: style.divider,
+        onMouseDown: this.onMouseDown,
+        onTouchStart: this.onTouchStart
+      },
+      react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('div', { style: style.handle })
+    );
+  };
+
+  return Divider;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _class.defaultProps = {
+  dividerWidth: 1,
+  handleBleed: 4,
+  direction: undefined,
+  showHandles: false,
+  borderColor: undefined,
+  onResizeStart: undefined,
+  onResizeEnd: undefined
+}, _temp);
+
+Divider.propTypes =  true ? {
+  dividerWidth: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number,
+  handleBleed: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number,
+  direction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  panelID: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number.isRequired,
+  handleResize: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func.isRequired,
+  showHandles: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool,
+  borderColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  onResizeStart: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  onResizeEnd: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func
+} : undefined;
+
+/***/ }),
+
+/***/ "./node_modules/react-panelgroup/es/Panel.js":
+/*!***************************************************!*\
+  !*** ./node_modules/react-panelgroup/es/Panel.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Panel; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
+var _class, _temp2;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+var Panel = (_temp2 = _class = function (_React$Component) {
+  _inherits(Panel, _React$Component);
+
+  function Panel() {
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, Panel);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args))), _this), _this.onResizeObjectLoad = function () {
+      _this.refs.resizeObject.contentDocument.defaultView.addEventListener('resize', function () {
+        return _this.calculateStretchWidth();
+      });
+    }, _this.onNextFrame = function (callback) {
+      setTimeout(function () {
+        window.requestAnimationFrame(callback);
+      }, 0);
+    }, _this.calculateStretchWidth = function () {
+      if (_this.props.onWindowResize !== null) {
+        var rect = _this.node.getBoundingClientRect();
+
+        _this.props.onWindowResize(_this.props.panelID, { x: rect.width, y: rect.height }, undefined, _this.node.parentElement
+        // recalcalculate again if the width is below minimum
+        // Kinda hacky, but for large resizes like fullscreen/Restore
+        // it can't solve it in one pass.
+        // function() {this.onNextFrame(this.calculateStretchWidth)}.bind(this)
+        );
+      }
+    }, _temp), _possibleConstructorReturn(_this, _ret);
+  }
+
+  // Find the resizeObject if it has one
+  Panel.prototype.componentDidMount = function componentDidMount() {
+    var _this2 = this;
+
+    if (this.props.resize === 'stretch') {
+      this.refs.resizeObject.addEventListener('load', function () {
+        return _this2.onResizeObjectLoad();
+      });
+      this.refs.resizeObject.data = 'about:blank';
+      this.calculateStretchWidth(); // this.onNextFrame(this.calculateStretchWidth);
+    }
+  };
+
+  // Attach resize event listener to resizeObject
+
+
+  // Utility function to wait for next render before executing a function
+
+
+  // Recalculate the stretchy panel if it's container has been resized
+
+
+  Panel.prototype.createResizeObject = function createResizeObject() {
+    var style = {
+      resizeObject: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -1,
+        opacity: 0
+      }
+    };
+
+    // only attach resize object if panel is stretchy.  Others dont need it
+    return this.props.resize === 'stretch' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement('object', { 'aria-label': 'panel', style: style.resizeObject, ref: 'resizeObject', type: 'text/html' }) : null;
+  };
+
+  // Render component
+
+
+  Panel.prototype.render = function render() {
+    var _this3 = this;
+
+    var resizeObject = this.createResizeObject();
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      'div',
+      {
+        ref: function ref(node) {
+          _this3.node = node;
+        },
+        className: 'panelWrapper',
+        style: this.props.style
+      },
+      resizeObject,
+      this.props.children
+    );
+  };
+
+  return Panel;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _class.defaultProps = {
+  resize: undefined,
+  onWindowResize: undefined
+}, _temp2);
+
+Panel.propTypes =  true ? {
+  resize: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  onWindowResize: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  panelID: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number.isRequired,
+  style: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object.isRequired,
+  children: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.array, prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object]).isRequired
+} : undefined;
+
+/***/ }),
+
+/***/ "./node_modules/react-panelgroup/es/PanelGroup.js":
+/*!********************************************************!*\
+  !*** ./node_modules/react-panelgroup/es/PanelGroup.js ***!
+  \********************************************************/
+/*! exports provided: Divider, Panel, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PanelGroup; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Panel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Panel */ "./node_modules/react-panelgroup/es/Panel.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Panel", function() { return _Panel__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+
+/* harmony import */ var _Divider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Divider */ "./node_modules/react-panelgroup/es/Divider.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Divider", function() { return _Divider__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _class, _temp;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+
+
+
+var PanelGroup = (_temp = _class = function (_React$Component) {
+  _inherits(PanelGroup, _React$Component);
+
+  // Load initial panel configuration from props
+  function PanelGroup() {
+    _classCallCheck(this, PanelGroup);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args)));
+
+    _this.defaultResize = function (props, index, defaultResize) {
+      var resize = defaultResize;
+      if (props.panelWidths[index].resize) {
+        resize = props.panelWidths[index].resize; // eslint-disable-line
+      } else {
+        resize = props.panelWidths[index].size ? 'dynamic' : resize;
+      }
+      return resize;
+    };
+
+    _this.loadPanels = function (props) {
+      var panels = [];
+
+      if (props.children) {
+        // Default values if none were provided
+        var defaultSize = 256;
+        var defaultMinSize = 48;
+        var defaultMaxSize = 0;
+        var defaultResize = 'stretch';
+
+        var stretchIncluded = false;
+        var children = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.toArray(props.children);
+
+        for (var i = 0; i < children.length; i++) {
+          if (i < props.panelWidths.length && props.panelWidths[i]) {
+            var widthObj = {
+              size: props.panelWidths[i].size !== undefined ? props.panelWidths[i].size : defaultSize,
+              minSize: props.panelWidths[i].minSize !== undefined ? props.panelWidths[i].minSize : defaultMinSize,
+              maxSize: props.panelWidths[i].maxSize !== undefined ? props.panelWidths[i].maxSize : defaultMaxSize,
+              resize: _this.defaultResize(props, i, defaultResize),
+              snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : [],
+              style: _extends({}, _this.getPanelClass().defaultProps.style, props.panelWidths[i].style || {})
+            };
+            panels.push(widthObj);
+          } else {
+            // default values if no props are given
+            panels.push({
+              size: defaultSize,
+              resize: defaultResize,
+              minSize: defaultMinSize,
+              maxSize: defaultMaxSize,
+              snap: [],
+              style: {}
+            });
+          }
+
+          // if none of the panels included was stretchy, make the last one stretchy
+          if (panels[i].resize === 'stretch') stretchIncluded = true;
+          if (!stretchIncluded && i === children.length - 1) panels[i].resize = 'stretch';
+        }
+      }
+
+      return {
+        panels: panels
+      };
+    };
+
+    _this.onUpdate = function (panels) {
+      if (_this.props.onUpdate) {
+        _this.props.onUpdate(panels.slice());
+      }
+    };
+
+    _this.onResizeStart = function () {
+      if (_this.props.onResizeStart) {
+        // actually this slice clones only array, underlying objects stays the same
+        _this.props.onResizeStart(_this.state.panels.slice());
+      }
+    };
+
+    _this.onResizeEnd = function () {
+      if (_this.props.onResizeEnd) {
+        _this.props.onResizeEnd(_this.state.panels.slice());
+      }
+    };
+
+    _this.getSizeDirection = function (caps) {
+      if (caps) {
+        return _this.props.direction === 'column' ? 'Height' : 'Width';
+      }
+      return _this.props.direction === 'column' ? 'height' : 'width';
+    };
+
+    _this.handleResize = function (i, delta) {
+      var tempPanels = _this.state.panels.slice();
+      var returnDelta = _this.resizePanel(i, _this.props.direction === 'row' ? delta.x : delta.y, tempPanels);
+      _this.setState({ panels: tempPanels });
+      _this.onUpdate(tempPanels);
+      return returnDelta;
+    };
+
+    _this.resizePanel = function (panelIndex, delta, panels) {
+      // 1) first let's calculate and make sure all the sizes add up to be correct.
+      var masterSize = 0;
+      for (var iti = 0; iti < panels.length; iti += 1) {
+        masterSize += panels[iti].size;
+      }
+      var boundingRect = _this.node.getBoundingClientRect();
+      var boundingSize = (_this.props.direction === 'column' ? boundingRect.height : boundingRect.width) - _this.props.spacing * (_this.props.children.length - 1);
+      if (Math.abs(boundingSize - masterSize) <= 0.01) {
+        // Debug log
+        // console.log({ panels }, `ERROR! SIZES DON'T MATCH!: ${masterSize}, ${boundingSize}`)
+
+        // 2) Rectify the situation by adding all the unacounted for space to the first panel
+        panels[panelIndex].size += boundingSize - masterSize;
+      }
+
+      var minsize = void 0;
+      var maxsize = void 0;
+
+      // track the progressive delta so we can report back how much this panel
+      // actually moved after all the adjustments have been made
+      var resultDelta = delta;
+
+      // make the changes and deal with the consequences later
+      panels[panelIndex].size += delta;
+      panels[panelIndex + 1].size -= delta;
+
+      // Min and max for LEFT panel
+      minsize = _this.getPanelMinSize(panelIndex, panels);
+      maxsize = _this.getPanelMaxSize(panelIndex, panels);
+
+      // if we made the left panel too small
+      if (panels[panelIndex].size < minsize) {
+        delta = minsize - panels[panelIndex].size;
+
+        if (panelIndex === 0) {
+          resultDelta = _this.resizePanel(panelIndex, delta, panels);
+        } else {
+          resultDelta = _this.resizePanel(panelIndex - 1, -delta, panels);
+        }
+      }
+
+      // if we made the left panel too big
+      if (maxsize !== 0 && panels[panelIndex].size > maxsize) {
+        delta = panels[panelIndex].size - maxsize;
+
+        if (panelIndex === 0) {
+          resultDelta = _this.resizePanel(panelIndex, -delta, panels);
+        } else {
+          resultDelta = _this.resizePanel(panelIndex - 1, delta, panels);
+        }
+      }
+
+      // Min and max for RIGHT panel
+      minsize = _this.getPanelMinSize(panelIndex + 1, panels);
+      maxsize = _this.getPanelMaxSize(panelIndex + 1, panels);
+
+      // if we made the right panel too small
+      if (panels[panelIndex + 1].size < minsize) {
+        delta = minsize - panels[panelIndex + 1].size;
+
+        if (panelIndex + 1 === panels.length - 1) {
+          resultDelta = _this.resizePanel(panelIndex, -delta, panels);
+        } else {
+          resultDelta = _this.resizePanel(panelIndex + 1, delta, panels);
+        }
+      }
+
+      // if we made the right panel too big
+      if (maxsize !== 0 && panels[panelIndex + 1].size > maxsize) {
+        delta = panels[panelIndex + 1].size - maxsize;
+
+        if (panelIndex + 1 === panels.length - 1) {
+          resultDelta = _this.resizePanel(panelIndex, delta, panels);
+        } else {
+          resultDelta = _this.resizePanel(panelIndex + 1, -delta, panels);
+        }
+      }
+
+      // Iterate through left panel's snap positions
+      for (var i = 0; i < panels[panelIndex].snap.length; i++) {
+        if (Math.abs(panels[panelIndex].snap[i] - panels[panelIndex].size) < 20) {
+          delta = panels[panelIndex].snap[i] - panels[panelIndex].size;
+
+          if (delta !== 0 && panels[panelIndex].size + delta >= _this.getPanelMinSize(panelIndex, panels) && panels[panelIndex + 1].size - delta >= _this.getPanelMinSize(panelIndex + 1, panels)) {
+            resultDelta = _this.resizePanel(panelIndex, delta, panels);
+          }
+        }
+      }
+
+      // Iterate through right panel's snap positions
+      for (var _i = 0; _i < panels[panelIndex + 1].snap.length; _i++) {
+        if (Math.abs(panels[panelIndex + 1].snap[_i] - panels[panelIndex + 1].size) < 20) {
+          delta = panels[panelIndex + 1].snap[_i] - panels[panelIndex + 1].size;
+
+          if (delta !== 0 && panels[panelIndex].size + delta >= _this.getPanelMinSize(panelIndex, panels) && panels[panelIndex + 1].size - delta >= _this.getPanelMinSize(panelIndex + 1, panels)) {
+            resultDelta = _this.resizePanel(panelIndex, -delta, panels);
+          }
+        }
+      }
+
+      // return how much this panel actually resized
+      return resultDelta;
+    };
+
+    _this.getPanelMinSize = function (panelIndex, panels) {
+      if (panels[panelIndex].resize === 'fixed') {
+        if (!panels[panelIndex].fixedSize) {
+          panels[panelIndex].fixedSize = panels[panelIndex].size;
+        }
+        return panels[panelIndex].fixedSize;
+      }
+      return panels[panelIndex].minSize;
+    };
+
+    _this.getPanelMaxSize = function (panelIndex, panels) {
+      if (panels[panelIndex].resize === 'fixed') {
+        if (!panels[panelIndex].fixedSize) {
+          panels[panelIndex].fixedSize = panels[panelIndex].size;
+        }
+        return panels[panelIndex].fixedSize;
+      }
+      return panels[panelIndex].maxSize;
+      // return 0;
+    };
+
+    _this.getPanelGroupMinSize = function (spacing) {
+      var size = 0;
+      for (var i = 0; i < _this.state.panels.length; i++) {
+        size += _this.getPanelMinSize(i, _this.state.panels);
+      }
+      return size + (_this.state.panels.length - 1) * spacing;
+    };
+
+    _this.getPanelGroupMaxSize = function (spacing) {
+      var size = 0;
+      for (var i = 0; i < _this.state.panels.length; i++) {
+        size += _this.getPanelMaxSize(i, _this.state.panels);
+      }
+      return size + (_this.state.panels.length - 1) * spacing;
+    };
+
+    _this.setPanelSize = function (panelIndex, size, callback, node) {
+      if (!_this.node && node) {
+        // due to timing child elements may have parent node first!
+        _this.node = node;
+      }
+      size = _this.props.direction === 'column' ? size.y : size.x;
+      if (size !== _this.state.panels[panelIndex].size) {
+        var tempPanels = _this.state.panels;
+        // make sure we can actually resize this panel this small
+        if (size < tempPanels[panelIndex].minSize) {
+          var diff = tempPanels[panelIndex].minSize - size;
+          tempPanels[panelIndex].size = tempPanels[panelIndex].minSize;
+
+          // 1) Find all of the dynamic panels that we can resize and
+          // decrease them until the difference is gone
+          for (var i = 0; i < tempPanels.length; i += 1) {
+            if (i !== panelIndex && tempPanels[i].resize === 'dynamic') {
+              var available = tempPanels[i].size - tempPanels[i].minSize;
+              var cut = Math.min(diff, available);
+              tempPanels[i].size -= cut;
+              // if the difference is gone then we are done!
+              diff -= cut;
+              if (diff === 0) {
+                break;
+              }
+            }
+          }
+        } else {
+          tempPanels[panelIndex].size = size;
+        }
+        _this.setState({ panels: tempPanels });
+
+        if (panelIndex > 0) {
+          _this.handleResize(panelIndex - 1, { x: 0, y: 0 });
+        } else if (_this.state.panels.length > 2) {
+          _this.handleResize(panelIndex + 1, { x: 0, y: 0 });
+        }
+
+        if (callback) {
+          callback();
+        }
+      }
+    };
+
+    _this.state = _this.loadPanels(_this.props);
+    return _this;
+  }
+
+  // reload panel configuration if props update
+
+
+  PanelGroup.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+    var nextPanels = nextProps.panelWidths;
+
+    // Only update from props if we're supplying the props in the first place
+    if (nextPanels.length) {
+      // if the panel array is a different size we know to update
+      if (this.state.panels.length !== nextPanels.length) {
+        this.setState(this.loadPanels(nextProps));
+      } else {
+        // otherwise we need to iterate to spot any difference
+        for (var i = 0; i < nextPanels.length; i++) {
+          if (this.state.panels[i].size !== nextPanels[i].size || this.state.panels[i].minSize !== nextPanels[i].minSize || this.state.panels[i].maxSize !== nextPanels[i].maxSize || this.state.panels[i].resize !== nextPanels[i].resize) {
+            this.setState(this.loadPanels(nextProps));
+            break;
+          }
+        }
+      }
+    }
+  };
+  // load provided props into state
+
+
+  // Pass internal state out if there's a callback for it
+  // Useful for saving panel configuration
+
+
+  // For styling, track which direction to apply sizing to
+
+
+  PanelGroup.prototype.getStyle = function getStyle() {
+    var _container;
+
+    var container = (_container = {
+      width: '100%',
+      height: '100%'
+    }, _container['min' + this.getSizeDirection(true)] = this.getPanelGroupMinSize(this.props.spacing), _container.display = 'flex', _container.flexDirection = this.props.direction, _container.flexGrow = 1, _container);
+
+    return {
+      container: container,
+      panel: {
+        flexGrow: 0,
+        display: 'flex'
+      }
+    };
+  };
+
+  PanelGroup.prototype.getPanelStyle = function getPanelStyle(index) {
+    var _extends2;
+
+    var _props = this.props,
+        direction = _props.direction,
+        panelColor = _props.panelColor;
+
+
+    var panel = this.state.panels[index];
+    var style = panel.style;
+
+    // setting up the style for this panel.  Should probably be handled
+    // in the child component, but this was easier for now
+
+    var newPanelStyle = _extends((_extends2 = {}, _extends2[this.getSizeDirection()] = panel.size, _extends2[direction === 'row' ? 'height' : 'width'] = '100%', _extends2['min' + this.getSizeDirection(true)] = panel.resize === 'stretch' ? 0 : panel.size, _extends2.flexGrow = panel.resize === 'stretch' ? 1 : 0, _extends2.flexShrink = panel.resize === 'stretch' ? 1 : 0, _extends2.display = 'flex', _extends2.overflow = 'hidden', _extends2.position = 'relative', _extends2), style);
+    if (panelColor !== null) {
+      // patch in the background color if it was supplied as a prop
+      newPanelStyle = _extends({}, newPanelStyle, {
+        backgroundColor: panelColor
+      });
+    }
+
+    return newPanelStyle;
+  };
+
+  PanelGroup.prototype.createPanelProps = function createPanelProps(_ref) {
+    var panelStyle = _ref.panelStyle,
+        index = _ref.index,
+        initialChildren = _ref.initialChildren;
+
+    var panelState = this.state.panels[index];
+    var stretchIncluded = false;
+    // give position info to children
+    var metadata = {
+      isFirst: index === 0,
+      isLast: index === initialChildren.length - 1,
+      resize: panelState.resize,
+
+      // window resize handler if this panel is stretchy
+      onWindowResize: panelState.resize === 'stretch' ? this.setPanelSize : null
+    };
+
+    // if none of the panels included was stretchy, make the last one stretchy
+    if (panelState.resize === 'stretch') stretchIncluded = true;
+    if (!stretchIncluded && metadata.isLast) metadata.resize = 'stretch';
+
+    return _extends({
+      style: panelStyle,
+      key: index,
+      panelID: index
+    }, metadata);
+  };
+
+  PanelGroup.prototype.createPanel = function createPanel(_ref2) {
+    var panelStyle = _ref2.panelStyle,
+        index = _ref2.index,
+        initialChildren = _ref2.initialChildren;
+
+    var Klass = this.getPanelClass();
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      Klass,
+      this.createPanelProps({ panelStyle: panelStyle, index: index, initialChildren: initialChildren }),
+      initialChildren[index]
+    );
+  };
+  // eslint-disable-next-line class-methods-use-this
+
+
+  PanelGroup.prototype.getPanelClass = function getPanelClass() {
+    // mainly for accessing default props of panels
+    return _Panel__WEBPACK_IMPORTED_MODULE_2__["default"];
+  };
+
+  PanelGroup.prototype.maybeDivide = function maybeDivide(_ref3) {
+    var initialChildren = _ref3.initialChildren,
+        newChildren = _ref3.newChildren,
+        index = _ref3.index;
+
+    // add a handle between panels
+    if (index < initialChildren.length - 1) {
+      newChildren.push(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Divider__WEBPACK_IMPORTED_MODULE_3__["default"], {
+        borderColor: this.props.borderColor,
+        key: 'divider' + index,
+        panelID: index,
+        handleResize: this.handleResize,
+        dividerWidth: this.props.spacing,
+        direction: this.props.direction,
+        showHandles: this.props.showHandles,
+        onResizeStart: this.onResizeStart,
+        onResizeEnd: this.onResizeEnd
+      }));
+    }
+  };
+
+  // Entry point for resizing panels.
+  // We clone the panel array and perform operations on it so we can
+  // setState after the recursive operations are finished
+
+
+  // Recursive panel resizing so we can push other panels out of the way
+  // if we've exceeded the target panel's extents
+
+
+  // Utility function for getting min pixel size of panel
+
+
+  // Utility function for getting max pixel size of panel
+
+
+  // Utility function for getting min pixel size of the entire panel group
+
+
+  // Utility function for getting max pixel size of the entire panel group
+
+
+  // Hard-set a panel's size
+  // Used to recalculate a stretchy panel when the window is resized
+
+
+  PanelGroup.prototype.render = function render() {
+    var _this2 = this;
+
+    var children = this.props.children;
+
+
+    var style = this.getStyle();
+
+    // lets build up a new children array with added resize borders
+    var initialChildren = react__WEBPACK_IMPORTED_MODULE_0___default.a.Children.toArray(children);
+    var newChildren = [];
+
+    for (var i = 0; i < initialChildren.length; i++) {
+      var panelStyle = this.getPanelStyle(i);
+      var newPanel = this.createPanel({ panelStyle: panelStyle, index: i, initialChildren: initialChildren });
+      newChildren.push(newPanel);
+      this.maybeDivide({ initialChildren: initialChildren, newChildren: newChildren, index: i });
+    }
+
+    return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(
+      'div',
+      {
+        className: 'panelGroup',
+        style: style.container,
+        ref: function ref(node) {
+          _this2.node = node;
+        }
+      },
+      newChildren
+    );
+  };
+
+  return PanelGroup;
+}(react__WEBPACK_IMPORTED_MODULE_0___default.a.Component), _class.defaultProps = {
+  spacing: 1,
+  direction: 'row',
+  panelWidths: [],
+  onUpdate: undefined,
+  onResizeStart: undefined,
+  onResizeEnd: undefined,
+  panelColor: undefined,
+  borderColor: undefined,
+  showHandles: false
+}, _temp);
+
+PanelGroup.propTypes =  true ? {
+  spacing: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.number,
+  direction: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  panelWidths: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.array,
+  children: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.oneOfType([prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.array, prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.object]).isRequired,
+  onUpdate: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  onResizeStart: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  onResizeEnd: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.func,
+  panelColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  borderColor: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,
+  showHandles: prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.bool
+} : undefined;
+
+/***/ }),
+
+/***/ "./node_modules/react-panelgroup/es/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/react-panelgroup/es/index.js ***!
+  \***************************************************/
+/*! exports provided: Panel, Divider, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PanelGroup__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PanelGroup */ "./node_modules/react-panelgroup/es/PanelGroup.js");
+/* harmony import */ var _Panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Panel */ "./node_modules/react-panelgroup/es/Panel.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Panel", function() { return _Panel__WEBPACK_IMPORTED_MODULE_1__["default"]; });
+
+/* harmony import */ var _Divider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Divider */ "./node_modules/react-panelgroup/es/Divider.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Divider", function() { return _Divider__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (_PanelGroup__WEBPACK_IMPORTED_MODULE_0__["default"]);
+// ultimatley created this file due to
+// https://github.com/insin/nwb/issues/449
+
+/***/ }),
+
 /***/ "./node_modules/styled-components/dist/styled-components.browser.esm.js":
 /*!******************************************************************************!*\
   !*** ./node_modules/styled-components/dist/styled-components.browser.esm.js ***!
