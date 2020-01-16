@@ -46,8 +46,10 @@ dist/index.js
 design/images/vw9Qut0iUCshVNWIAidrNYYQYOw.png
 design/images/sNMWpoOr1M0nw12nd3uRK3NSbs.png
 design/images/egIfvz04SemIl2OkJx76p5ArXAM.png
+design/images/YFoGnyD01yuxdNImH8wKs4m1KlE.png
 design/images/WUUtFqPaCN3uONgxtaoPyNHdfGk.png
 design/images/PycxL1DNT5YQpTUpLuuuD4nWGYY.png
+design/images/Mdi7qjgPOKwfyuQa6RcJvgzHtc.png
 design/images/MRX0BFmceNfFLCoOXXV8JuixQo4.png
 design/images/KQGyTMPTw0atwKUG3IHKZyUTkYg.jpg
 code/styles.css
