@@ -42,6 +42,17 @@ node_modules/@framer/koenbok.tab-bar/design/document.json
 node_modules/@framer/koenbok.tab-bar/code/canvas.tsx
 node_modules/@framer/koenbok.tab-bar/code/TabBar.tsx
 node_modules/@framer/koenbok.tab-bar/README.md
+node_modules/@framer/freddieboyframer.keyboard-captions/tsconfig.json
+node_modules/@framer/freddieboyframer.keyboard-captions/package.json
+node_modules/@framer/freddieboyframer.keyboard-captions/metadata/icon.png
+node_modules/@framer/freddieboyframer.keyboard-captions/metadata/artwork.png
+node_modules/@framer/freddieboyframer.keyboard-captions/dist/index.js
+node_modules/@framer/freddieboyframer.keyboard-captions/design/document.json
+node_modules/@framer/freddieboyframer.keyboard-captions/code/canvas.tsx
+node_modules/@framer/freddieboyframer.keyboard-captions/code/UseKey.ts
+node_modules/@framer/freddieboyframer.keyboard-captions/code/Mac_us_keyboard.ts
+node_modules/@framer/freddieboyframer.keyboard-captions/code/KeyCaption.tsx
+node_modules/@framer/freddieboyframer.keyboard-captions/README.md
 dist/index.js
 design/images/vw9Qut0iUCshVNWIAidrNYYQYOw.png
 design/images/sNMWpoOr1M0nw12nd3uRK3NSbs.png
@@ -49,7 +60,6 @@ design/images/egIfvz04SemIl2OkJx76p5ArXAM.png
 design/images/YFoGnyD01yuxdNImH8wKs4m1KlE.png
 design/images/WUUtFqPaCN3uONgxtaoPyNHdfGk.png
 design/images/PycxL1DNT5YQpTUpLuuuD4nWGYY.png
-design/images/Mdi7qjgPOKwfyuQa6RcJvgzHtc.png
 design/images/MRX0BFmceNfFLCoOXXV8JuixQo4.png
 design/images/KQGyTMPTw0atwKUG3IHKZyUTkYg.jpg
 code/styles.css
